@@ -191,11 +191,6 @@ sequenceDiagram
 ```
 
 ### Project Structure
-    API-->>Query: Data
-    Query-->>Hook: Data
-    Hook-->>Page: Update state
-    Page-->>User: Render
-```
 
 ```
 src/
