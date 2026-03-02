@@ -18,22 +18,7 @@ Personal finance tracking desktop application with income, expense categorizatio
 | State/Data | TanStack Query |
 | Backend API | Go + SQLite |
 
-## Project Structure
-
-```
-.
-├── Financial-Manager_B/     # Backend (Go + SQLite)
-├── Financial-Manager_F/     # Frontend (Tauri + React)
-├── src-tauri/              # Tauri Rust backend
-└── src/                    # React frontend
-    ├── domain/              # Entities, interfaces
-    ├── infrastructure/      # API client
-    └── presentation/       # UI components, pages
-```
-
 ## Getting Started
-
-### Frontend
 
 ```bash
 # Install dependencies
