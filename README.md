@@ -88,14 +88,14 @@ graph TD
     App[Application Layer]
     Domain[Domain Layer]
     Infra[Infrastructure Layer]
-    API[Go Backend API]
-    DB[(SQLite)]
+    Backend[External Backend]
+    DB[(Database)]
 
     UI --> App
     App --> Domain
     App --> Infra
-    Infra --> API
-    API --> DB
+    Infra --> Backend
+    Backend --> DB
 ```
 
 ### Layer Dependencies
@@ -119,7 +119,7 @@ graph LR
     end
     
     subgraph Infrastructure
-        API[API Client]
+        Client[HTTP Client]
     end
     
     Pages --> UseCases
@@ -127,7 +127,7 @@ graph LR
     Hooks --> UseCases
     UseCases --> Entities
     UseCases --> Interfaces
-    API --> Interfaces
+    Client --> Interfaces
 ```
 
 ### Component Overview
@@ -149,8 +149,8 @@ graph TB
     end
     
     subgraph Providers
-        Query[TanStack Query]
-        Router[React Router]
+        Query[State Management]
+        Router[Router]
     end
     
     Dashboard --> UI
@@ -162,7 +162,7 @@ graph TB
     Categories --> Lists
     Export --> UI
     
-    Query --> API
+    Query --> Client
     Router --> Pages
 ```
 
@@ -174,17 +174,23 @@ sequenceDiagram
     participant Page
     participant Hook
     participant Query
-    participant API
+    participant Client
     participant Backend
     
     User->>Page: Interact
     Page->>Hook: Call useCase
     Hook->>Query: useQuery/mutation
-    Query->>API: HTTP Request
-    API->>Backend: Go Handler
-    Backend->>DB: SQLite
-    DB-->>Backend: Data
-    Backend-->>API: JSON Response
+    Query->>Client: HTTP Request
+    Client->>Backend: REST API
+    Backend->>Backend: Process
+    Backend-->>Client: JSON Response
+    Client-->>Query: Data
+    Query-->>Hook: Data
+    Hook-->>Page: Update state
+    Page-->>User: Render
+```
+
+### Project Structure
     API-->>Query: Data
     Query-->>Hook: Data
     Hook-->>Page: Update state
