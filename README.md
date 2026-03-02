@@ -82,6 +82,115 @@ The frontend consumes the following API endpoints:
 
 The frontend follows Clean Architecture principles:
 
+```mermaid
+graph TD
+    UI[UI Layer - Presentation]
+    App[Application Layer]
+    Domain[Domain Layer]
+    Infra[Infrastructure Layer]
+    API[Go Backend API]
+    DB[(SQLite)]
+
+    UI --> App
+    App --> Domain
+    App --> Infra
+    Infra --> API
+    API --> DB
+```
+
+### Layer Dependencies
+
+```mermaid
+graph LR
+    subgraph Presentation
+        Pages[Pages]
+        Components[Components]
+        Hooks[Hooks]
+    end
+    
+    subgraph Application
+        UseCases[Use Cases]
+        DTO[DTOs]
+    end
+    
+    subgraph Domain
+        Entities[Entities]
+        Interfaces[Interfaces]
+    end
+    
+    subgraph Infrastructure
+        API[API Client]
+    end
+    
+    Pages --> UseCases
+    Components --> UseCases
+    Hooks --> UseCases
+    UseCases --> Entities
+    UseCases --> Interfaces
+    API --> Interfaces
+```
+
+### Component Overview
+
+```mermaid
+graph TB
+    subgraph Pages
+        Dashboard[Dashboard]
+        Transactions[Transactions]
+        Accounts[Accounts]
+        Categories[Categories]
+        Export[Export]
+    end
+    
+    subgraph Components
+        UI[UI primitives]
+        Forms[Forms]
+        Lists[Lists]
+    end
+    
+    subgraph Providers
+        Query[TanStack Query]
+        Router[React Router]
+    end
+    
+    Dashboard --> UI
+    Transactions --> Forms
+    Transactions --> Lists
+    Accounts --> Forms
+    Accounts --> Lists
+    Categories --> Forms
+    Categories --> Lists
+    Export --> UI
+    
+    Query --> API
+    Router --> Pages
+```
+
+### Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Page
+    participant Hook
+    participant Query
+    participant API
+    participant Backend
+    
+    User->>Page: Interact
+    Page->>Hook: Call useCase
+    Hook->>Query: useQuery/mutation
+    Query->>API: HTTP Request
+    API->>Backend: Go Handler
+    Backend->>DB: SQLite
+    DB-->>Backend: Data
+    Backend-->>API: JSON Response
+    API-->>Query: Data
+    Query-->>Hook: Data
+    Hook-->>Page: Update state
+    Page-->>User: Render
+```
+
 ```
 src/
 ├── domain/           # Business entities and interfaces
