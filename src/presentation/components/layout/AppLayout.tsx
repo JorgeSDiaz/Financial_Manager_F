@@ -7,7 +7,7 @@ export function AppLayout() {
   const { isCollapsed, toggle } = useSidebar();
 
   return (
-    <div className="flex min-h-screen bg-surface dark:bg-[var(--color-background)]">
+    <div className="flex h-screen overflow-hidden bg-surface dark:bg-[var(--color-background)]">
       <Sidebar isCollapsed={isCollapsed} onToggle={toggle} />
 
       <button
@@ -26,7 +26,7 @@ export function AppLayout() {
 
       <main
         className={[
-          'flex-1 transition-all duration-200 ease-out',
+          'flex-1 overflow-y-auto transition-all duration-200 ease-out',
           isCollapsed ? 'ml-16' : 'ml-[200px]',
         ].join(' ')}
       >
