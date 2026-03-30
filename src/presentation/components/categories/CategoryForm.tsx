@@ -1,39 +1,39 @@
 import { useState } from 'react';
 import { Loader2, Check } from 'lucide-react';
-import { Input, Button, Select, CurrencyInput } from '../ui';
-import { ICON_OPTIONS, ACCOUNT_TYPE_OPTIONS } from './accountConstants';
-import { COLOR_OPTIONS } from '../../utils/colorOptions';
-import type { Account, CreateAccountPayload } from '../../../domain/entities';
+import { Input, Button, Select } from '../ui';
+import { ICON_OPTIONS, CATEGORY_TYPE_OPTIONS, COLOR_OPTIONS, ICON_MAP, DEFAULT_COLOR } from './categoryConstants';
+import type { Category, CreateCategoryPayload } from '../../../domain/entities';
 
-interface AccountFormProps {
-  account?: Account;
-  onSubmit: (payload: CreateAccountPayload) => void;
+interface CategoryFormProps {
+  category?: Category;
+  onSubmit: (payload: CreateCategoryPayload) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
   mutationError?: string | null;
 }
 
-export function AccountForm({ account, onSubmit, onCancel, isSubmitting = false, mutationError }: AccountFormProps) {
-  const isEditing = !!account;
+export function CategoryForm({
+  category,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+  mutationError,
+}: CategoryFormProps) {
+  const isEditing = !!category;
 
-  const [name, setName] = useState(account?.name ?? '');
-  const [type, setType] = useState<Account['type']>(account?.type ?? 'cash');
-  const [initialBalance, setInitialBalance] = useState(
-    account ? String(account.initialBalance) : ''
-  );
-  const [currency, setCurrency] = useState(account?.currency ?? 'COP');
-  const [color, setColor] = useState(account?.color ?? '#5c1c87');
-  const [icon, setIcon] = useState(account?.icon ?? 'Wallet');
+  const initialColor = category?.color ?? DEFAULT_COLOR;
+  const initialIcon = (category?.icon && ICON_MAP[category.icon]) ? category.icon : 'Tag';
+
+  const [name, setName] = useState(category?.name ?? '');
+  const [type, setType] = useState<Category['type']>(category?.type ?? 'expense');
+  const [color, setColor] = useState(initialColor);
+  const [icon, setIcon] = useState(initialIcon);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = 'El nombre es obligatorio';
-    if (!type) newErrors.type = 'Selecciona un tipo de cuenta';
-    if (!isEditing) {
-      const bal = initialBalance === '' ? 0 : parseFloat(initialBalance);
-      if (isNaN(bal) || bal < 0) newErrors.initialBalance = 'El balance debe ser un número válido';
-    }
+    if (!type) newErrors.type = 'Selecciona un tipo';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -41,14 +41,7 @@ export function AccountForm({ account, onSubmit, onCancel, isSubmitting = false,
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    onSubmit({
-      name: name.trim(),
-      type,
-      initial_balance: initialBalance === '' ? 0 : parseFloat(initialBalance),
-      currency,
-      color,
-      icon,
-    });
+    onSubmit({ name: name.trim(), type, color, icon });
   }
 
   return (
@@ -61,7 +54,7 @@ export function AccountForm({ account, onSubmit, onCancel, isSubmitting = false,
           setName(e.target.value);
           if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
         }}
-        placeholder="Ej. Cuenta principal"
+        placeholder="Ej. Supermercado"
         error={errors.name}
       />
 
@@ -69,32 +62,18 @@ export function AccountForm({ account, onSubmit, onCancel, isSubmitting = false,
         label="Tipo"
         value={type}
         onChange={(val) => {
-          setType(val as Account['type']);
+          setType(val as Category['type']);
           if (errors.type) setErrors((prev) => ({ ...prev, type: '' }));
         }}
-        options={ACCOUNT_TYPE_OPTIONS}
+        options={CATEGORY_TYPE_OPTIONS}
         error={errors.type}
       />
-
-      {!isEditing && (
-        <CurrencyInput
-          label="Dinero disponible"
-          value={initialBalance}
-          onChange={(val) => {
-            setInitialBalance(val);
-            if (errors.initialBalance) setErrors((prev) => ({ ...prev, initialBalance: '' }));
-          }}
-          currency={currency}
-          onCurrencyChange={setCurrency}
-          error={errors.initialBalance}
-        />
-      )}
 
       {/* Color selector */}
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-text-primary">Color</span>
         <div className="flex gap-2 flex-wrap">
-          {COLOR_OPTIONS.map((c) => {
+          {(COLOR_OPTIONS.includes(color) ? COLOR_OPTIONS : [color, ...COLOR_OPTIONS]).map((c) => {
             const isSelected = color === c;
             return (
               <button
@@ -150,7 +129,7 @@ export function AccountForm({ account, onSubmit, onCancel, isSubmitting = false,
               <Loader2 className="w-4 h-4 animate-spin" />
               {isEditing ? 'Guardando...' : 'Creando...'}
             </span>
-          ) : isEditing ? 'Guardar Cambios' : 'Crear Cuenta'}
+          ) : isEditing ? 'Guardar Cambios' : 'Crear Categoría'}
         </Button>
       </div>
     </form>

@@ -76,6 +76,13 @@ export interface CreateCategoryPayload {
   icon: string;
 }
 
+export interface UpdateCategoryPayload {
+  name?: string;
+  type?: Category['type'];
+  color?: string;
+  icon?: string;
+}
+
 export interface CreateTransactionPayload {
   type: Transaction['type'];
   account_id: string;
