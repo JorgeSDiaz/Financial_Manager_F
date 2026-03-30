@@ -6,7 +6,7 @@ function App() {
   return (
     <QueryProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-surface">
+        <div className="min-h-screen bg-surface dark:bg-[var(--color-background)]">
           <Routes>
             <Route path="/" element={<Dashboard />} />
           </Routes>
