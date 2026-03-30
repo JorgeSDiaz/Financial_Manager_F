@@ -1,6 +1,7 @@
-import { Wallet, Building2, CreditCard, PiggyBank, Landmark } from 'lucide-react';
+import { Landmark } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatters';
 import { EmptyState } from '../ui/EmptyState';
+import { ACCOUNT_TYPE_ICONS, ACCOUNT_TYPE_LABELS } from '../accounts/accountConstants';
 
 interface Account {
   name: string;
@@ -12,20 +13,6 @@ interface AccountsListProps {
   accounts: Account[];
   className?: string;
 }
-
-const ACCOUNT_ICONS = {
-  cash: Wallet,
-  bank: Building2,
-  card: CreditCard,
-  savings: PiggyBank,
-};
-
-const ACCOUNT_LABELS = {
-  cash: 'Efectivo',
-  bank: 'Banco',
-  card: 'Tarjeta',
-  savings: 'Ahorros',
-};
 
 const GRID_STYLE = { gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' };
 
@@ -56,7 +43,7 @@ export function AccountsList({ accounts, className = '' }: AccountsListProps) {
       ) : (
         <div className="grid gap-px bg-[var(--color-card-border)]" style={GRID_STYLE}>
           {accounts.map((account) => {
-            const Icon = ACCOUNT_ICONS[account.type];
+            const Icon = ACCOUNT_TYPE_ICONS[account.type];
             const isNegative = account.balance < 0;
             return (
               <div
@@ -68,7 +55,7 @@ export function AccountsList({ accounts, className = '' }: AccountsListProps) {
                     <Icon className="w-4 h-4" strokeWidth={1.5} />
                   </span>
                   <span className="text-xs font-medium text-text-secondary bg-gray-100 dark:bg-primary/10 rounded-full px-2 py-0.5">
-                    {ACCOUNT_LABELS[account.type]}
+                    {ACCOUNT_TYPE_LABELS[account.type]}
                   </span>
                 </div>
                 <p className="text-sm font-medium text-text-primary mb-1 truncate">{account.name}</p>
