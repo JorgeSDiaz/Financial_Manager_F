@@ -91,3 +91,11 @@ export interface CreateTransactionPayload {
   description: string;
   date: string;
 }
+
+export interface UpdateTransactionPayload {
+  account_id?: string;
+  category_id?: string;
+  amount?: number;
+  description?: string;
+  date?: string;
+}

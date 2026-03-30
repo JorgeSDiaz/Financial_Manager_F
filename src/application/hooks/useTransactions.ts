@@ -1,6 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchTransactions, createTransaction } from '../../infrastructure/api/transactionsService';
-import type { CreateTransactionPayload } from '../../domain/entities';
+import {
+  fetchTransactions,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+} from '../../infrastructure/api/transactionsService';
+import type { CreateTransactionPayload, UpdateTransactionPayload } from '../../domain/entities';
+
+function useInvalidateTransactions() {
+  const queryClient = useQueryClient();
+  return () => {
+    queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey: ['summary'] });
+    queryClient.invalidateQueries({ queryKey: ['accounts'] });
+  };
+}
 
 export function useTransactions(type?: 'income' | 'expense') {
   return useQuery({
@@ -10,13 +25,34 @@ export function useTransactions(type?: 'income' | 'expense') {
 }
 
 export function useCreateTransaction() {
-  const queryClient = useQueryClient();
+  const invalidate = useInvalidateTransactions();
   return useMutation({
     mutationFn: (payload: CreateTransactionPayload) => createTransaction(payload),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['transactions', variables.type] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
-      queryClient.invalidateQueries({ queryKey: ['summary'] });
-    },
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateTransaction() {
+  const invalidate = useInvalidateTransactions();
+  return useMutation({
+    mutationFn: ({
+      id,
+      type,
+      payload,
+    }: {
+      id: string;
+      type: 'income' | 'expense';
+      payload: UpdateTransactionPayload;
+    }) => updateTransaction(id, type, payload),
+    onSuccess: invalidate,
+  });
+}
+
+export function useDeleteTransaction() {
+  const invalidate = useInvalidateTransactions();
+  return useMutation({
+    mutationFn: ({ id, type }: { id: string; type: 'income' | 'expense' }) =>
+      deleteTransaction(id, type),
+    onSuccess: invalidate,
   });
 }

@@ -1,7 +1,7 @@
 import { apiClient } from './apiClient';
 import type { ApiTransactionsResponse, ApiTransaction, ApiSummaryResponse } from './types';
 import { mapTransaction, mapSummary } from './mappers';
-import type { Transaction, CreateTransactionPayload } from '../../domain/entities';
+import type { Transaction, CreateTransactionPayload, UpdateTransactionPayload } from '../../domain/entities';
 
 export async function fetchTransactions(type?: 'income' | 'expense'): Promise<Transaction[]> {
   if (type === 'income') {
@@ -33,6 +33,29 @@ export async function createTransaction(payload: CreateTransactionPayload): Prom
     payload.type === 'income'
       ? '/api/v1/transactions/incomes'
       : '/api/v1/transactions/expenses';
-  const { data } = await apiClient.post<ApiTransaction>(endpoint, payload);
+  // Strip `type` from body — the endpoint URL already encodes the transaction type
+  const { type: _type, ...body } = payload;
+  const { data } = await apiClient.post<ApiTransaction>(endpoint, body);
   return mapTransaction(data);
+}
+
+export async function updateTransaction(
+  id: string,
+  type: 'income' | 'expense',
+  payload: UpdateTransactionPayload
+): Promise<Transaction> {
+  const endpoint =
+    type === 'income'
+      ? `/api/v1/transactions/incomes/${id}`
+      : `/api/v1/transactions/expenses/${id}`;
+  const { data } = await apiClient.put<ApiTransaction>(endpoint, payload);
+  return mapTransaction(data);
+}
+
+export async function deleteTransaction(id: string, type: 'income' | 'expense'): Promise<void> {
+  const endpoint =
+    type === 'income'
+      ? `/api/v1/transactions/incomes/${id}`
+      : `/api/v1/transactions/expenses/${id}`;
+  await apiClient.delete(endpoint);
 }
