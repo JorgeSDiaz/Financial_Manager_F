@@ -7,7 +7,6 @@ import {
   ExpensesByCategoryChart,
   AccountsList,
 } from '../components/dashboard';
-import { ThemeToggle } from '../components/ui';
 import { formatCurrency } from '../utils/formatters';
 
 const mockData = {
@@ -42,10 +41,7 @@ export function Dashboard() {
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
-          <ThemeToggle />
-        </div>
+        <h1 className="text-2xl font-bold text-text-primary mb-6">Dashboard</h1>
 
         <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4 auto-rows-[minmax(80px,auto)]">
 
