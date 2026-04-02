@@ -130,9 +130,7 @@ export function Transactions() {
       updateMutation.mutate(
         {
           id: editingTransaction.id,
-          type: editingTransaction.type,
           payload: {
-            account_id: payload.account_id,
             category_id: payload.category_id,
             amount: payload.amount,
             description: payload.description,
@@ -159,7 +157,7 @@ export function Transactions() {
   function confirmDelete() {
     if (!deletingTransaction) return;
     deleteMutation.mutate(
-      { id: deletingTransaction.id, type: deletingTransaction.type },
+      { id: deletingTransaction.id },
       { onSuccess: () => setDeletingTransaction(null) }
     );
   }

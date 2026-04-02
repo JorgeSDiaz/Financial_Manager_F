@@ -35,15 +35,8 @@ export function useCreateTransaction() {
 export function useUpdateTransaction() {
   const invalidate = useInvalidateTransactions();
   return useMutation({
-    mutationFn: ({
-      id,
-      type,
-      payload,
-    }: {
-      id: string;
-      type: 'income' | 'expense';
-      payload: UpdateTransactionPayload;
-    }) => updateTransaction(id, type, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateTransactionPayload }) =>
+      updateTransaction(id, payload),
     onSuccess: invalidate,
   });
 }
@@ -51,8 +44,7 @@ export function useUpdateTransaction() {
 export function useDeleteTransaction() {
   const invalidate = useInvalidateTransactions();
   return useMutation({
-    mutationFn: ({ id, type }: { id: string; type: 'income' | 'expense' }) =>
-      deleteTransaction(id, type),
+    mutationFn: ({ id }: { id: string }) => deleteTransaction(id),
     onSuccess: invalidate,
   });
 }

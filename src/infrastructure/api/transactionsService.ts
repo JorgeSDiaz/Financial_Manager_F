@@ -41,21 +41,12 @@ export async function createTransaction(payload: CreateTransactionPayload): Prom
 
 export async function updateTransaction(
   id: string,
-  type: 'income' | 'expense',
   payload: UpdateTransactionPayload
 ): Promise<Transaction> {
-  const endpoint =
-    type === 'income'
-      ? `/api/v1/transactions/incomes/${id}`
-      : `/api/v1/transactions/expenses/${id}`;
-  const { data } = await apiClient.put<ApiTransaction>(endpoint, payload);
+  const { data } = await apiClient.put<ApiTransaction>(`/api/v1/transactions/${id}`, payload);
   return mapTransaction(data);
 }
 
-export async function deleteTransaction(id: string, type: 'income' | 'expense'): Promise<void> {
-  const endpoint =
-    type === 'income'
-      ? `/api/v1/transactions/incomes/${id}`
-      : `/api/v1/transactions/expenses/${id}`;
-  await apiClient.delete(endpoint);
+export async function deleteTransaction(id: string): Promise<void> {
+  await apiClient.delete(`/api/v1/transactions/${id}`);
 }
